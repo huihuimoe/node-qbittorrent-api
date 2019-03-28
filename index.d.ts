@@ -84,14 +84,14 @@ export interface qBitInstance {
   search(searchText: string, options: SearchOptions, callback: (error: Error, items: TorrentItem[]) => void): void
   search(searchText: string, callback: (error: Error, items: TorrentItem[]) => void): void
   // Get global info
-  version(callback: (error: Error) => void, data: any): void
-  api(callback: (error: Error) => void, data: any): void
-  apiMin(callback: (error: Error) => void, data: any): void
-  transferInfo(callback: (error: Error) => void, data: any): void
-  preferences(callback: (error: Error) => void, data: any): void
-  getGlobalDlLimit(callback: (error: Error) => void, data: any): void
-  getGlobalUpLimit(callback: (error: Error) => void, data: any): void
-  alternativeSpeedLimitsEnabled(callback: (error: Error) => void, data: any): void
+  version(callback: (error: Error, data: any) => void): void
+  api(callback: (error: Error, data: any) => void): void
+  apiMin(callback: (error: Error, data: any) => void): void
+  transferInfo(callback: (error: Error, data: any) => void): void
+  preferences(callback: (error: Error, data: any) => void): void
+  getGlobalDlLimit(callback: (error: Error, data: any) => void): void
+  getGlobalUpLimit(callback: (error: Error, data: any) => void): void
+  alternativeSpeedLimitsEnabled(callback: (error: Error, data: any) => void): void
   // Get torrent info
   details(torrent: TorrentItem | string, callback: (error: Error, data: any) => void): void
   trackers(torrent: TorrentItem | string, callback: (error: Error, data: any) => void): void
