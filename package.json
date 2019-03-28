@@ -14,13 +14,13 @@
     "name": "vonthar",
     "email": "vonthar@hotmail.com"
   },
-  "homepage": "https://github.com/vonthar/node-qbittorrent-api",
+  "homepage": "https://github.com/huihuimoe/node-qbittorrent-api",
   "repository": {
     "type": "git",
-    "url": "git://github.com/vonthar/node-qbittorrent-api.git"
+    "url": "git://github.com/huihuimoe/node-qbittorrent-api.git"
   },
   "bugs": {
-    "url": "https://github.com/vonthar/node-qbittorrent-api/issues"
+    "url": "https://github.com/huihuimoe/node-qbittorrent-api/issues"
   },
   "main": "src/qbt.js",
   "types": "index.d.ts",

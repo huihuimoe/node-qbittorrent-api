@@ -152,6 +152,22 @@ function startSession(host, username, password) {
         addTorrent(queue, torrent, options, callback);
       }
     },
+    add2: function (torrent, options, callback) {
+      options = options || {};
+      if (options) {
+        if (typeof options === "function") {
+          callback = options;
+          options = {}
+        }
+      }
+      if (typeof torrent === "string" && torrent.match(/^(?:http|magnet:|bc:)/)) {
+        options["cookie"] = cookies.get(urlString.parse(torrent).host);
+        addTorrentUrl(queue, torrent, options, callback);
+      }
+      else {
+        addTorrent(queue, torrent, options, callback);
+      }
+    },
     addTrackers: function (torrent, trackers, callback) {
       execTorrentCommand(queue, "addTrackers", torrent, {
         //urls: [].concat(trackers).join("%0A").replace(/&/g, "%26")
