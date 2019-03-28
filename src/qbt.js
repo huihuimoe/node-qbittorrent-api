@@ -253,7 +253,7 @@ function logIn(queue, username, password, callback) {
   queue.push({
     method: 'POST',
     url: '/login',
-    form: {
+    formData: {
       'username': username,
       'password': password,
     },
@@ -310,7 +310,7 @@ function addTorrent(queue, torrent, options, callback) {
   queue.push({
     method: 'POST',
     url: '/command/upload',
-    form: options,
+    formData: options,
   }, function(error) {
     if (callback) {
       callback(error);
@@ -330,7 +330,7 @@ function addTorrentUrl(queue, url, options, callback) {
   queue.push({
     method: "POST",
     url: "/command/download",
-    form: options
+    formData: options
   }, function (error) {
     if (callback) {
       callback(error);
@@ -341,7 +341,7 @@ function addTorrentUrl(queue, url, options, callback) {
   queue.push({
     method: 'POST',
     url: '/command/download',
-    form: options,
+    formData: options,
   }, function(error) {
     if (callback) {
       callback(error);
@@ -512,7 +512,7 @@ function execGlobalCommand(queue, command, options, callback) {
   queue.push({
     method: 'POST',
     url: '/command/' + command,
-    form: options,
+    formData: options,
   }, function(error, response, body) {
     if (callback) {
       try {
@@ -537,7 +537,7 @@ function execTorrentCommand(queue, command, torrents, options, callback) {
     queue.push({
       method: 'POST',
       url: '/command/' + command,
-      form: Object.assign({}, options, {hash: hash}),
+      formData: Object.assign({}, options, {hash: hash}),
     }, function(error, response, body) {
       try {
         done(error, JSON.parse(body));
@@ -564,7 +564,7 @@ function execGroupCommand(queue, command, torrents, options, callback) {
   queue.push({
     method: 'POST',
     url: '/command/' + command,
-    form: Object.assign({}, options, {hashes: getHashList(torrents).join('|')}),
+    formData: Object.assign({}, options, {hashes: getHashList(torrents).join('|')}),
   }, function(error, response, body) {
     if (callback) {
       try {
