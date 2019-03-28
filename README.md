@@ -4,7 +4,7 @@ Wrapper around [qBittorrent's API](https://github.com/qbittorrent/qBittorrent/wi
 
 # Installation
 
-`npm i qbittorrent-api`
+`npm i huihuimoe/qbittorrent-api` or use yarn `yarn add huihuimoe/qbittorrent-api`
 
 # Overview
 
