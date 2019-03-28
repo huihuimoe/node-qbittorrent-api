@@ -5,7 +5,7 @@ const path = require('path');
 const urlString = require('url');
 const queryString = require('querystring');
 const async = require('async');
-const request = require('request').defaults({jar: true});
+const request = require('request');
 const stream = require('stream');
 
 module.exports.connect = startSession;
@@ -23,9 +23,10 @@ function startSession(host, username, password) {
   } else if (!host.startsWith('http')) {
     host = 'http://' + host;
   }
+  const baseRequest = request.defaults({jar: true});
   const queue = async.queue(function(req, callback) {
     req.url = host + req.url;
-    request(req, callback);
+    baseRequest(req, callback);
   });
   if (username && password) {
     logIn(queue, username, password, function(error) {
