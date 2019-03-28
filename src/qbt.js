@@ -1,14 +1,14 @@
-﻿"use strict";
+﻿'use strict';
 
-var fs = require("fs");
-var path = require("path");
-var urlString = require("url");
-var queryString = require("querystring");
-var async = require("async");
-var request = require("request");
+var fs = require('fs');
+var path = require('path');
+var urlString = require('url');
+var queryString = require('querystring');
+var async = require('async');
+var request = require('request');
 var stream = require('stream');
 
-request = request.defaults({ jar: true });
+request = request.defaults({jar: true});
 module.exports.connect = startSession;
 
 
@@ -20,17 +20,16 @@ module.exports.connect = startSession;
  */
 function startSession(host, username, password) {
   if (!host) {
-    host = "http://localhost:8080";
+    host = 'http://localhost:8080';
+  } else if (!host.startsWith('http')) {
+    host = 'http://' + host;
   }
-  else if (!host.startsWith("http")) {
-    host = "http://" + host;
-  }
-  var queue = async.queue(function (req, callback) {
+  var queue = async.queue(function(req, callback) {
     req.url = host + req.url;
     request(req, callback);
   });
   if (username && password) {
-    logIn(queue, username, password, function (error) {
+    logIn(queue, username, password, function(error) {
       if (error) {
         throw error;
       }
@@ -38,206 +37,202 @@ function startSession(host, username, password) {
   }
   var cookies = new Map();
   return {
-    all: function (label, options, callback) {
-      getTorrentList(queue, "all", label, options, callback);
+    all: function(label, options, callback) {
+      getTorrentList(queue, 'all', label, options, callback);
     },
-    downloading: function (label, options, callback) {
-      getTorrentList(queue, "downloading", label, options, callback);
+    downloading: function(label, options, callback) {
+      getTorrentList(queue, 'downloading', label, options, callback);
     },
-    seeding: function (label, options, callback) {
-      getTorrentList(queue, "seeding", label, options, callback);
+    seeding: function(label, options, callback) {
+      getTorrentList(queue, 'seeding', label, options, callback);
     },
-    completed: function (label, options, callback) {
-      getTorrentList(queue, "completed", label, options, callback);
+    completed: function(label, options, callback) {
+      getTorrentList(queue, 'completed', label, options, callback);
     },
-    resumed: function (label, options, callback) {
-      getTorrentList(queue, "resumed", label, options, callback);
+    resumed: function(label, options, callback) {
+      getTorrentList(queue, 'resumed', label, options, callback);
     },
-    paused: function (label, options, callback) {
-      getTorrentList(queue, "paused", label, options, callback);
+    paused: function(label, options, callback) {
+      getTorrentList(queue, 'paused', label, options, callback);
     },
-    active: function (label, options, callback) {
-      getTorrentList(queue, "active", label, options, callback);
+    active: function(label, options, callback) {
+      getTorrentList(queue, 'active', label, options, callback);
     },
-    inactive: function (label, options, callback) {
-      getTorrentList(queue, "inactive", label, options, callback);
+    inactive: function(label, options, callback) {
+      getTorrentList(queue, 'inactive', label, options, callback);
     },
-    queued: function (label, options, callback) {
-      getTorrentList(queue, "queued", label, options, callback);
+    queued: function(label, options, callback) {
+      getTorrentList(queue, 'queued', label, options, callback);
     },
-    errored: function (label, options, callback) {
-      getTorrentList(queue, "errored", label, options, callback);
+    errored: function(label, options, callback) {
+      getTorrentList(queue, 'errored', label, options, callback);
     },
-    version: function (callback) {
-      getGlobalInfo(queue, "/version/qbittorrent", callback);
+    version: function(callback) {
+      getGlobalInfo(queue, '/version/qbittorrent', callback);
     },
-    api: function (callback) {
-      getGlobalInfo(queue, "/version/api", callback);
+    api: function(callback) {
+      getGlobalInfo(queue, '/version/api', callback);
     },
-    apiMin: function (callback) {
-      getGlobalInfo(queue, "/version/api_min", callback);
+    apiMin: function(callback) {
+      getGlobalInfo(queue, '/version/api_min', callback);
     },
-    transferInfo: function (callback) {
-      getGlobalInfo(queue, "/query/transferInfo", callback);
+    transferInfo: function(callback) {
+      getGlobalInfo(queue, '/query/transferInfo', callback);
     },
-    preferences: function (callback) {
-      getGlobalInfo(queue, "/query/preferences", callback);
+    preferences: function(callback) {
+      getGlobalInfo(queue, '/query/preferences', callback);
     },
-    getGlobalDlLimit: function (callback) {
-      getGlobalInfo(queue, "/command/getGlobalDlLimit", callback);
+    getGlobalDlLimit: function(callback) {
+      getGlobalInfo(queue, '/command/getGlobalDlLimit', callback);
     },
-    getGlobalUpLimit: function (callback) {
-      getGlobalInfo(queue, "/command/getGlobalUpLimit", callback);
+    getGlobalUpLimit: function(callback) {
+      getGlobalInfo(queue, '/command/getGlobalUpLimit', callback);
     },
-    alternativeSpeedLimitsEnabled: function (callback) {
-      getGlobalInfo(queue, "/command/alternativeSpeedLimitsEnabled", callback);
+    alternativeSpeedLimitsEnabled: function(callback) {
+      getGlobalInfo(queue, '/command/alternativeSpeedLimitsEnabled', callback);
     },
-    details: function (torrent, callback) {
-      getTorrentDetails(queue, "propertiesGeneral", torrent, callback);
+    details: function(torrent, callback) {
+      getTorrentDetails(queue, 'propertiesGeneral', torrent, callback);
     },
-    trackers: function (torrent, callback) {
-      getTorrentDetails(queue, "propertiesTrackers", torrent, callback);
+    trackers: function(torrent, callback) {
+      getTorrentDetails(queue, 'propertiesTrackers', torrent, callback);
     },
-    webseeds: function (torrent, callback) {
-      getTorrentDetails(queue, "propertiesWebSeeds", torrent, callback);
+    webseeds: function(torrent, callback) {
+      getTorrentDetails(queue, 'propertiesWebSeeds', torrent, callback);
     },
-    files: function (torrent, callback) {
-      getTorrentDetails(queue, "propertiesFiles", torrent, callback);
+    files: function(torrent, callback) {
+      getTorrentDetails(queue, 'propertiesFiles', torrent, callback);
     },
-    pauseAll: function (callback) {
-      execGlobalCommand(queue, "pauseAll", {}, callback);
+    pauseAll: function(callback) {
+      execGlobalCommand(queue, 'pauseAll', {}, callback);
     },
-    resumeAll: function (callback) {
-      execGlobalCommand(queue, "resumeAll", {}, callback);
+    resumeAll: function(callback) {
+      execGlobalCommand(queue, 'resumeAll', {}, callback);
     },
-    setGlobalDlLimit: function (value, callback) {
-      execGlobalCommand(queue, "setGlobalDlLimit", { limit: value }, callback);
+    setGlobalDlLimit: function(value, callback) {
+      execGlobalCommand(queue, 'setGlobalDlLimit', {limit: value}, callback);
     },
-    setGlobalUpLimit: function (value, callback) {
-      execGlobalCommand(queue, "setGlobalUpLimit", { limit: value }, callback);
+    setGlobalUpLimit: function(value, callback) {
+      execGlobalCommand(queue, 'setGlobalUpLimit', {limit: value}, callback);
     },
-    setPreferences: function (values, callback) {
-      execGlobalCommand(queue, "setPreferences", {
-        json: JSON.stringify(values)
+    setPreferences: function(values, callback) {
+      execGlobalCommand(queue, 'setPreferences', {
+        json: JSON.stringify(values),
       }, callback);
     },
-    toggleAlternativeSpeedLimits: function (values, callback) {
-      execGlobalCommand(queue, "toggleAlternativeSpeedLimits", {}, callback);
+    toggleAlternativeSpeedLimits: function(values, callback) {
+      execGlobalCommand(queue, 'toggleAlternativeSpeedLimits', {}, callback);
     },
-    add: function (torrent, savePath, label, callback) {
+    add: function(torrent, savePath, label, callback) {
       var options = {};
       if (savePath) {
-        if (typeof savePath === "function") {
+        if (typeof savePath === 'function') {
           callback = savePath;
-        }
-        else {
-          options["savepath"] = savePath;
+        } else {
+          options['savepath'] = savePath;
         }
       }
       if (label) {
-        if (typeof label === "function") {
+        if (typeof label === 'function') {
           callback = label;
-        }
-        else {
-          options["label"] = label;
+        } else {
+          options['label'] = label;
         }
       }
-      if (typeof torrent === "string" && torrent.match(/^(?:http|magnet:|bc:)/)) {
-        options["cookie"] = cookies.get(urlString.parse(torrent).host);
+      if (typeof torrent === 'string' && torrent.match(/^(?:http|magnet:|bc:)/)) {
+        options['cookie'] = cookies.get(urlString.parse(torrent).host);
         addTorrentUrl(queue, torrent, options, callback);
-      }
-      else {
+      } else {
         addTorrent(queue, torrent, options, callback);
       }
     },
-    add2: function (torrent, options, callback) {
+    add2: function(torrent, options, callback) {
       options = options || {};
       if (options) {
-        if (typeof options === "function") {
+        if (typeof options === 'function') {
           callback = options;
-          options = {}
+          options = {};
         }
       }
-      if (typeof torrent === "string" && torrent.match(/^(?:http|magnet:|bc:)/)) {
-        options["cookie"] = cookies.get(urlString.parse(torrent).host);
+      if (typeof torrent === 'string' && torrent.match(/^(?:http|magnet:|bc:)/)) {
+        options['cookie'] = cookies.get(urlString.parse(torrent).host);
         addTorrentUrl(queue, torrent, options, callback);
-      }
-      else {
+      } else {
         addTorrent(queue, torrent, options, callback);
       }
     },
-    addTrackers: function (torrent, trackers, callback) {
-      execTorrentCommand(queue, "addTrackers", torrent, {
-        //urls: [].concat(trackers).join("%0A").replace(/&/g, "%26")
-        urls: [].concat(trackers).join("\n")
+    addTrackers: function(torrent, trackers, callback) {
+      execTorrentCommand(queue, 'addTrackers', torrent, {
+        // urls: [].concat(trackers).join("%0A").replace(/&/g, "%26")
+        urls: [].concat(trackers).join('\n'),
       }, callback);
     },
-    pause: function (torrents, callback) {
-      execTorrentCommand(queue, "pause", torrents, {}, callback);
+    pause: function(torrents, callback) {
+      execTorrentCommand(queue, 'pause', torrents, {}, callback);
     },
-    resume: function (torrents, callback) {
-      execTorrentCommand(queue, "resume", torrents, {}, callback);
+    resume: function(torrents, callback) {
+      execTorrentCommand(queue, 'resume', torrents, {}, callback);
     },
-    recheck: function (torrents, callback) {
-      execTorrentCommand(queue, "recheck", torrents, {}, callback);
+    recheck: function(torrents, callback) {
+      execTorrentCommand(queue, 'recheck', torrents, {}, callback);
     },
-    setFilePrio: function (torrent, fileId, value, callback) {
+    setFilePrio: function(torrent, fileId, value, callback) {
       torrent = getHashList(torrent)[0];
-      execTorrentCommand(queue, "setFilePrio", torrent, {
+      execTorrentCommand(queue, 'setFilePrio', torrent, {
         id: fileId,
-        priority: value
+        priority: value,
       }, callback);
     },
-    delete: function (torrents, callback) {
-      execGroupCommand(queue, "delete", torrents, {}, callback);
+    delete: function(torrents, callback) {
+      execGroupCommand(queue, 'delete', torrents, {}, callback);
     },
-    deleteData: function (torrents, callback) {
-      execGroupCommand(queue, "deletePerm", torrents, {}, callback);
+    deleteData: function(torrents, callback) {
+      execGroupCommand(queue, 'deletePerm', torrents, {}, callback);
     },
-    increasePrio: function (torrents, callback) {
-      execGroupCommand(queue, "increasePrio", torrents, {}, callback);
+    increasePrio: function(torrents, callback) {
+      execGroupCommand(queue, 'increasePrio', torrents, {}, callback);
     },
-    decreasePrio: function (torrents, callback) {
-      execGroupCommand(queue, "decreasePrio", torrents, {}, callback);
+    decreasePrio: function(torrents, callback) {
+      execGroupCommand(queue, 'decreasePrio', torrents, {}, callback);
     },
-    topPrio: function (torrents, callback) {
-      execGroupCommand(queue, "topPrio", torrents, {}, callback);
+    topPrio: function(torrents, callback) {
+      execGroupCommand(queue, 'topPrio', torrents, {}, callback);
     },
-    bottomPrio: function (torrents, callback) {
-      execGroupCommand(queue, "bottomPrio", torrents, {}, callback);
+    bottomPrio: function(torrents, callback) {
+      execGroupCommand(queue, 'bottomPrio', torrents, {}, callback);
     },
-    setDlLimit: function (torrents, value, callback) {
-      execGroupCommand(queue, "setTorrentsDlLimit", torrents, { limit: value }, callback);
+    setDlLimit: function(torrents, value, callback) {
+      execGroupCommand(queue, 'setTorrentsDlLimit', torrents, {limit: value}, callback);
     },
-    setUpLimit: function (torrents, value, callback) {
-      execGroupCommand(queue, "setTorrentsUpLimit", torrents, { limit: value }, callback);
+    setUpLimit: function(torrents, value, callback) {
+      execGroupCommand(queue, 'setTorrentsUpLimit', torrents, {limit: value}, callback);
     },
-    setLabel: function (torrents, value, callback) {
-      execGroupCommand(queue, "setLabel", torrents, { label: value }, callback);
+    setLabel: function(torrents, value, callback) {
+      execGroupCommand(queue, 'setLabel', torrents, {label: value}, callback);
     },
-    toggleSeqDl: function (torrents, callback) {
-      execGroupCommand(queue, "toggleSequentialDownload", torrents, {}, callback);
+    toggleSeqDl: function(torrents, callback) {
+      execGroupCommand(queue, 'toggleSequentialDownload', torrents, {}, callback);
     },
-    toggleFirstLastPiecePrio: function (torrents, callback) {
-      execGroupCommand(queue, "toggleFirstLastPiecePrio", torrents, {}, callback);
+    toggleFirstLastPiecePrio: function(torrents, callback) {
+      execGroupCommand(queue, 'toggleFirstLastPiecePrio', torrents, {}, callback);
     },
-    setForceStart: function (torrents, value, callback) {
-      execGroupCommand(queue, "setForceStart", torrents, { value: value }, callback);
+    setForceStart: function(torrents, value, callback) {
+      execGroupCommand(queue, 'setForceStart', torrents, {value: value}, callback);
     },
-    getDlLimit: function (torrent, callback) {
+    getDlLimit: function(torrent, callback) {
       torrent = getHashList(torrent)[0];
-      execGroupCommand(queue, "getTorrentsDlLimit", torrent, {}, callback);
+      execGroupCommand(queue, 'getTorrentsDlLimit', torrent, {}, callback);
     },
-    getUpLimit: function (torrent, callback) {
+    getUpLimit: function(torrent, callback) {
       torrent = getHashList(torrent)[0];
-      execGroupCommand(queue, "getTorrentsUpLimit", torrent, {}, callback);
+      execGroupCommand(queue, 'getTorrentsUpLimit', torrent, {}, callback);
     },
-    search: function (searchText, options, callback) {
+    search: function(searchText, options, callback) {
       searchTorrents(queue, searchText, options, callback);
     },
-    setCookie: function (host, value) {
+    setCookie: function(host, value) {
       cookies.set(host, value);
-    }
+    },
   };
 }
 
@@ -250,23 +245,23 @@ function startSession(host, username, password) {
  */
 function logIn(queue, username, password, callback) {
   if (!username || !password) {
-    callback(new Error("Must provide username and password."));
+    callback(new Error('Must provide username and password.'));
     return;
   }
   queue.push({
-    method: "POST",
-    url: "/login",
+    method: 'POST',
+    url: '/login',
     form: {
-      "username": username,
-      "password": password
-    }
-  }, function (error, response) {
+      'username': username,
+      'password': password,
+    },
+  }, function(error, response) {
     if (error) {
       callback(error);
       return;
     }
     if (response.statusCode !== 200) {
-      callback(new Error("Login failed with username: " + username));
+      callback(new Error('Login failed with username: ' + username));
       return;
     }
     callback();
@@ -282,42 +277,39 @@ function logIn(queue, username, password, callback) {
  */
 function addTorrent(queue, torrent, options, callback) {
   if (torrent instanceof stream.Readable) {
-    options["torrents"] = {
+    options['torrents'] = {
       value: torrent,
       options: {
         filename: torrent.path,
-        contentType: "application/x-bittorrent"
-      }
+        contentType: 'application/x-bittorrent',
+      },
     };
-  }
-  else if (typeof torrent === "string") {
+  } else if (typeof torrent === 'string') {
     try {
-      options["torrents"] = {
+      options['torrents'] = {
         value: fs.createReadStream(torrent),
         options: {
           filename: path.basename(torrent),
-          contentType: "application/x-bittorrent"
-        }
+          contentType: 'application/x-bittorrent',
+        },
       };
-    }
-    catch (error) {
+    } catch (error) {
       if (callback) {
         callback(error);
       }
       return;
     }
-  }
-  else {
+  } else {
     if (callback) {
-      callback(new Error("Torrent must be path or readable stream."));
+      callback(new Error('Torrent must be path or readable stream.'));
     }
     return;
   }
   queue.push({
-    method: "POST",
-    url: "/command/upload",
-    form: options
-  }, function (error) {
+    method: 'POST',
+    url: '/command/upload',
+    form: options,
+  }, function(error) {
     if (callback) {
       callback(error);
     }
@@ -332,7 +324,7 @@ function addTorrent(queue, torrent, options, callback) {
  * @param {function(error:Error)=} callback
  */
 function addTorrentUrl(queue, url, options, callback) {
-  /*options["urls"] = [].concat(url).join("%0A").replace(/&/g, "%26");
+  /* options["urls"] = [].concat(url).join("%0A").replace(/&/g, "%26");
   queue.push({
     method: "POST",
     url: "/command/download",
@@ -343,12 +335,12 @@ function addTorrentUrl(queue, url, options, callback) {
     }
   });
   return;*/
-  options["urls"] = [].concat(url).join("\n");
+  options['urls'] = [].concat(url).join('\n');
   queue.push({
-    method: "POST",
-    url: "/command/download",
-    form: options
-  }, function (error) {
+    method: 'POST',
+    url: '/command/download',
+    form: options,
+  }, function(error) {
     if (callback) {
       callback(error);
     }
@@ -372,60 +364,60 @@ function addTorrentUrl(queue, url, options, callback) {
  * @param {function(error:Error,items:Array<Object>)} callback
  */
 function getTorrentList(queue, filter, label, options, callback) {
-  if (typeof label !== "string") {
+  if (typeof label !== 'string') {
     callback = options;
     options = label;
     label = null;
   }
-  if (typeof options === "function") {
+  if (typeof options === 'function') {
     callback = options;
     options = {};
   }
   switch (filter) {
-    case "seeding":
-      options["filter"] = "completed";
+    case 'seeding':
+      options['filter'] = 'completed';
       break;
-    case "resumed":
-      options["filter"] = "all";
+    case 'resumed':
+      options['filter'] = 'all';
       break;
-    case "errored":
-    case "queued":
-      options["filter"] = "inactive";
+    case 'errored':
+    case 'queued':
+      options['filter'] = 'inactive';
       break;
     default:
-      options["filter"] = filter;
+      options['filter'] = filter;
   }
   if (label) {
-    options["label"] = label;
+    options['label'] = label;
   }
   queue.push({
-    method: "GET",
-    url: "/query/torrents?" + queryString.stringify(options)
-  }, function (error, response, body) {
+    method: 'GET',
+    url: '/query/torrents?' + queryString.stringify(options),
+  }, function(error, response, body) {
     if (error) {
       callback(error);
       return;
     }
     var items = JSON.parse(body);
     switch (filter) {
-      case "seeding":
-        items = items.filter(function (item) {
-          return item.state === "stalledUP" || item.state === "uploading";
+      case 'seeding':
+        items = items.filter(function(item) {
+          return item.state === 'stalledUP' || item.state === 'uploading';
         });
         break;
-      case "resumed":
-        items = items.filter(function (item) {
-          return !item.state.startsWith("paused");
+      case 'resumed':
+        items = items.filter(function(item) {
+          return !item.state.startsWith('paused');
         });
         break;
-      case "queued":
-        items = items.filter(function (item) {
-          return item.state.startsWith("queued");
+      case 'queued':
+        items = items.filter(function(item) {
+          return item.state.startsWith('queued');
         });
         break;
-      case "errored":
-        items = items.filter(function (item) {
-          return item.state === "error" || item.state === "missingFiles";
+      case 'errored':
+        items = items.filter(function(item) {
+          return item.state === 'error' || item.state === 'missingFiles';
         });
         break;
       default:
@@ -442,21 +434,20 @@ function getTorrentList(queue, filter, label, options, callback) {
  * @param {function(error:Error,items:Array<Object>)} callback
  */
 function searchTorrents(queue, searchText, options, callback) {
-  if (typeof options === "function") {
+  if (typeof options === 'function') {
     callback = options;
     options = {};
   }
   if (!options.filter) {
-    options.filter = "all";
+    options.filter = 'all';
   }
-  getTorrentList(queue, options.filter, options, function (error, items) {
-    if (typeof searchText === "string") {
-      items = items.filter(function (item) {
+  getTorrentList(queue, options.filter, options, function(error, items) {
+    if (typeof searchText === 'string') {
+      items = items.filter(function(item) {
         return item.name.indexOf(searchText) !== -1;
       });
-    }
-    else if (searchText.test) {
-      items = items.filter(function (item) {
+    } else if (searchText.test) {
+      items = items.filter(function(item) {
         return searchText.test(item.name);
       });
     }
@@ -472,13 +463,12 @@ function searchTorrents(queue, searchText, options, callback) {
  */
 function getGlobalInfo(queue, query, callback) {
   queue.push({
-    method: query.startsWith("/command/") ? "POST" : "GET",
-    url: query
-  }, function (error, response, body) {
+    method: query.startsWith('/command/') ? 'POST' : 'GET',
+    url: query,
+  }, function(error, response, body) {
     try {
       callback(error, JSON.parse(body));
-    }
-    catch (e) {
+    } catch (e) {
       callback(error, body);
     }
   });
@@ -494,13 +484,12 @@ function getGlobalInfo(queue, query, callback) {
 function getTorrentDetails(queue, query, torrents, callback) {
   var hash = getHashList(torrents)[0];
   queue.push({
-    method: "GET",
-    url: "/query/" + query + "/" + hash
-  }, function (error, response, body) {
+    method: 'GET',
+    url: '/query/' + query + '/' + hash,
+  }, function(error, response, body) {
     try {
       callback(error, JSON.parse(body));
-    }
-    catch (e) {
+    } catch (e) {
       callback(error, body);
     }
   });
@@ -514,20 +503,19 @@ function getTorrentDetails(queue, query, torrents, callback) {
  * @param {function(error:Error,data:Object)=} callback
  */
 function execGlobalCommand(queue, command, options, callback) {
-  if (typeof options === "function") {
+  if (typeof options === 'function') {
     callback = options;
     options = {};
   }
   queue.push({
-    method: "POST",
-    url: "/command/" + command,
-    form: options
-  }, function (error, response, body) {
+    method: 'POST',
+    url: '/command/' + command,
+    form: options,
+  }, function(error, response, body) {
     if (callback) {
       try {
         callback(error, JSON.parse(body));
-      }
-      catch (e) {
+      } catch (e) {
         callback(error, body);
       }
     }
@@ -543,20 +531,19 @@ function execGlobalCommand(queue, command, options, callback) {
  * @param {function(error:Error,data:Array<Object>)=} callback
  */
 function execTorrentCommand(queue, command, torrents, options, callback) {
-  async.map(getHashList(torrents), function (hash, done) {
+  async.map(getHashList(torrents), function(hash, done) {
     queue.push({
-      method: "POST",
-      url: "/command/" + command,
-      form: Object.assign({}, options, { hash: hash })
-    }, function (error, response, body) {
+      method: 'POST',
+      url: '/command/' + command,
+      form: Object.assign({}, options, {hash: hash}),
+    }, function(error, response, body) {
       try {
         done(error, JSON.parse(body));
-      }
-      catch (e) {
+      } catch (e) {
         done(error, body);
       }
     });
-  }, function (error, results) {
+  }, function(error, results) {
     if (callback) {
       callback(error, results);
     }
@@ -573,15 +560,14 @@ function execTorrentCommand(queue, command, torrents, options, callback) {
  */
 function execGroupCommand(queue, command, torrents, options, callback) {
   queue.push({
-    method: "POST",
-    url: "/command/" + command,
-    form: Object.assign({}, options, { hashes: getHashList(torrents).join("|") })
-  }, function (error, response, body) {
+    method: 'POST',
+    url: '/command/' + command,
+    form: Object.assign({}, options, {hashes: getHashList(torrents).join('|')}),
+  }, function(error, response, body) {
     if (callback) {
       try {
         callback(error, JSON.parse(body));
-      }
-      catch (e) {
+      } catch (e) {
         callback(error, body);
       }
     }
@@ -595,11 +581,10 @@ function execGroupCommand(queue, command, torrents, options, callback) {
  */
 function getHashList(items) {
   var hashes = [];
-  [].concat(items).forEach(function (item) {
-    if (typeof item === "string") {
+  [].concat(items).forEach(function(item) {
+    if (typeof item === 'string') {
       hashes.push(item);
-    }
-    else if (item.hash) {
+    } else if (item.hash) {
       hashes.push(item.hash);
     }
   });
