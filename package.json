@@ -23,6 +23,7 @@
     "url": "https://github.com/vonthar/node-qbittorrent-api/issues"
   },
   "main": "src/qbt.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "node test/qbt-tests.js",
     "lint": "eslint ."
