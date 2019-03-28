@@ -2,6 +2,10 @@
 
 declare module 'qbittorrent-api' {
   import { ReadStream } from 'fs'
+  type KVPair = {
+    [x: string]: string | number | boolean
+  }
+  type JsonBoolean = boolean | 'true' | 'false'
   export type TorrentFile = string | ReadStream
   export interface addOptions {
     savepath?: string
@@ -9,18 +13,18 @@ declare module 'qbittorrent-api' {
     /** old version `label` */
     label?: string
     category?: string
-    skip_checking?: string
-    paused?: string
-    root_folder?: string
+    skip_checking?: JsonBoolean
+    paused?: JsonBoolean
+    root_folder?: JsonBoolean
     rename?: string
     upLimit?: number
     dlLimit?: number
-    sequentialDownload?: string
-    firstLastPiecePrio?: string
+    sequentialDownload?: JsonBoolean
+    firstLastPiecePrio?: JsonBoolean
   }
   export interface ListOptions {
     sort?: string
-    reverse?: boolean
+    reverse?: JsonBoolean
     limit?: number | string
     offset?: number | string
   }
@@ -30,9 +34,6 @@ declare module 'qbittorrent-api' {
   }
   export type TorrentItem = {
     [x: string]: any
-  }
-  type KVPair = {
-    [x: string]: string | number | boolean
   }
   export interface qBitInstance {
     // Add a torrent
@@ -125,7 +126,7 @@ declare module 'qbittorrent-api' {
     setDlLimit(torrents: TorrentItem | string | Array<TorrentItem | string>, value: string | number, callback: (error: Error) => void): void
     setUpLimit(torrents: TorrentItem | string | Array<TorrentItem | string>, value: string | number, callback: (error: Error) => void): void
     setLabel(torrents: TorrentItem | string | Array<TorrentItem | string>, value: string, callback: (error: Error) => void): void
-    setForceStart(torrents: TorrentItem | string | Array<TorrentItem | string>, value: boolean, callback: (error: Error) => void): void
+    setForceStart(torrents: TorrentItem | string | Array<TorrentItem | string>, value: JsonBoolean, callback: (error: Error) => void): void
     addTrackers(torrent: TorrentItem | string | Array<TorrentItem | string>, trackers: string | string[], callback: (error: Error) => void): void
     // File commands
     setFilePrio(torrent: TorrentItem | string, fileId: string, value: 0 | 1 | 6 | 7, callback: (error: Error) => void): void
