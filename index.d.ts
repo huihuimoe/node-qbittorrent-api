@@ -2,7 +2,7 @@ import { ReadStream } from 'fs'
 type KVPair = {
   [x: string]: string | number | boolean
 }
-type JsonBoolean = boolean | 'true' | 'false'
+type JsonBoolean = 'true' | 'false'
 export type TorrentFile = string | ReadStream
 export interface addOptions {
   savepath?: string
