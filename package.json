@@ -39,8 +39,10 @@
   "eslintConfig": {
     "extends": "google",
     "rules": {
-      "max-len": 0,
-      "no-var": 0
+      "max-len": 0
+    },
+    "parserOptions": {
+      "ecmaVersion": 6
     }
   }
 }

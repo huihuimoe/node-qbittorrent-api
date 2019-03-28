@@ -1,14 +1,13 @@
 ﻿'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var urlString = require('url');
-var queryString = require('querystring');
-var async = require('async');
-var request = require('request');
-var stream = require('stream');
+const fs = require('fs');
+const path = require('path');
+const urlString = require('url');
+const queryString = require('querystring');
+const async = require('async');
+const request = require('request').defaults({jar: true});
+const stream = require('stream');
 
-request = request.defaults({jar: true});
 module.exports.connect = startSession;
 
 
@@ -24,7 +23,7 @@ function startSession(host, username, password) {
   } else if (!host.startsWith('http')) {
     host = 'http://' + host;
   }
-  var queue = async.queue(function(req, callback) {
+  const queue = async.queue(function(req, callback) {
     req.url = host + req.url;
     request(req, callback);
   });
@@ -35,7 +34,7 @@ function startSession(host, username, password) {
       }
     });
   }
-  var cookies = new Map();
+  const cookies = new Map();
   return {
     all: function(label, options, callback) {
       getTorrentList(queue, 'all', label, options, callback);
@@ -124,7 +123,7 @@ function startSession(host, username, password) {
       execGlobalCommand(queue, 'toggleAlternativeSpeedLimits', {}, callback);
     },
     add: function(torrent, savePath, label, callback) {
-      var options = {};
+      const options = {};
       if (savePath) {
         if (typeof savePath === 'function') {
           callback = savePath;
@@ -398,7 +397,7 @@ function getTorrentList(queue, filter, label, options, callback) {
       callback(error);
       return;
     }
-    var items = JSON.parse(body);
+    let items = JSON.parse(body);
     switch (filter) {
       case 'seeding':
         items = items.filter(function(item) {
@@ -482,7 +481,7 @@ function getGlobalInfo(queue, query, callback) {
  * @param {function(error:Error,data:Object)} callback
  */
 function getTorrentDetails(queue, query, torrents, callback) {
-  var hash = getHashList(torrents)[0];
+  const hash = getHashList(torrents)[0];
   queue.push({
     method: 'GET',
     url: '/query/' + query + '/' + hash,
@@ -580,7 +579,7 @@ function execGroupCommand(queue, command, torrents, options, callback) {
  * @return {Array<string>}
  */
 function getHashList(items) {
-  var hashes = [];
+  const hashes = [];
   [].concat(items).forEach(function(item) {
     if (typeof item === 'string') {
       hashes.push(item);
