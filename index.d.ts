@@ -33,6 +33,7 @@ export type TorrentItem = {
   [x: string]: any
 }
 export interface qBitInstance {
+  reconnect(): void
   // Add a torrent
   add(torrent: TorrentFile, savePath?: string, label?: string, callback?: (error: Error) => void): void
   add(torrent: TorrentFile, savePath?: string, callback?: (error: Error) => void): void

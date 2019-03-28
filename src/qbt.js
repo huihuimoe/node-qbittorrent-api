@@ -28,15 +28,17 @@ function startSession(host, username, password) {
     req.url = host + req.url;
     baseRequest(req, callback);
   });
+  const reconnect = logIn.bind(this, queue, username, password, function(error) {
+    if (error) {
+      throw error;
+    }
+  });
   if (username && password) {
-    logIn(queue, username, password, function(error) {
-      if (error) {
-        throw error;
-      }
-    });
+    reconnect();
   }
   const cookies = new Map();
   return {
+    reconnect: reconnect,
     all: function(label, options, callback) {
       getTorrentList(queue, 'all', label, options, callback);
     },
