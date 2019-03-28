@@ -4,11 +4,9 @@ var fs = require("fs");
 var path = require("path");
 var urlString = require("url");
 var queryString = require("querystring");
-var xtend = require("xtend");
 var async = require("async");
-var isStream = require("isstream");
-var HashTable = require("ht");
 var request = require("request");
+var stream = require('stream');
 
 request = request.defaults({ jar: true });
 module.exports.connect = startSession;
@@ -38,7 +36,7 @@ function startSession(host, username, password) {
       }
     });
   }
-  var cookies = new HashTable();
+  var cookies = new Map();
   return {
     all: function (label, options, callback) {
       getTorrentList(queue, "all", label, options, callback);
@@ -283,7 +281,7 @@ function logIn(queue, username, password, callback) {
  * @param {function(error:Error)=} callback
  */
 function addTorrent(queue, torrent, options, callback) {
-  if (isStream.isReadable(torrent)) {
+  if (torrent instanceof stream.Readable) {
     options["torrents"] = {
       value: torrent,
       options: {
@@ -549,7 +547,7 @@ function execTorrentCommand(queue, command, torrents, options, callback) {
     queue.push({
       method: "POST",
       url: "/command/" + command,
-      form: xtend(options, { hash: hash })
+      form: Object.assign({}, options, { hash: hash })
     }, function (error, response, body) {
       try {
         done(error, JSON.parse(body));
@@ -577,7 +575,7 @@ function execGroupCommand(queue, command, torrents, options, callback) {
   queue.push({
     method: "POST",
     url: "/command/" + command,
-    form: xtend(options, { hashes: getHashList(torrents).join("|") })
+    form: Object.assign({}, options, { hashes: getHashList(torrents).join("|") })
   }, function (error, response, body) {
     if (callback) {
       try {
