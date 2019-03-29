@@ -23,6 +23,9 @@ function startSession(host, username, password) {
   } else if (!host.startsWith('http')) {
     host = 'http://' + host;
   }
+  if (host.endsWith('/')) {
+    host = host.slice(0, -1);
+  }
   const baseRequest = request.defaults({jar: true});
   const queue = async.queue(function(req, callback) {
     req.url = host + req.url;
