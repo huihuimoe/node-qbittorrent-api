@@ -316,11 +316,13 @@ function addTorrent(queue, torrent, options, callback) {
     formData: options,
   }, function(error, response) {
     if (callback) {
-      if (response.statusCode !== 200) {
-        callback(new Error('AddTorrent failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      if (error) {
+        callback(error);
         return;
       }
-      callback(error);
+      if (response && response.statusCode !== 200) {
+        callback(new Error('AddTorrent failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      }
     }
   });
 }
@@ -340,11 +342,13 @@ function addTorrentUrl(queue, url, options, callback) {
     formData: options,
   }, function(error, response) {
     if (callback) {
-      if (response.statusCode !== 200) {
-        callback(new Error('AddTorrentUrl failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      if (error) {
+        callback(error);
         return;
       }
-      callback(error);
+      if (response && response.statusCode !== 200) {
+        callback(new Error('AddTorrentUrl failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      }
     }
   });
 }
@@ -472,14 +476,16 @@ function getGlobalInfo(queue, query, callback) {
     method: query.startsWith('/command/') ? 'POST' : 'GET',
     url: query,
   }, function(error, response, body) {
-    if (response.statusCode !== 200) {
-      callback(new Error('GetGlobalInfo failed ' + response.statusCode + ' '));
+    if (error) {
+      try {
+        callback(error, JSON.parse(body));
+      } catch (e) {
+        callback(error, body);
+      }
       return;
     }
-    try {
-      callback(error, JSON.parse(body));
-    } catch (e) {
-      callback(error, body);
+    if (response.statusCode !== 200) {
+      callback(new Error('GetGlobalInfo failed ' + response.statusCode + ' '));
     }
   });
 }
@@ -497,14 +503,18 @@ function getTorrentDetails(queue, query, torrents, callback) {
     method: 'GET',
     url: '/query/' + query + '/' + hash,
   }, function(error, response, body) {
-    if (response.statusCode !== 200) {
-      callback(new Error('GetTorrentDetails failed ' + response.statusCode + '  with hash: ' + hash));
-      return;
-    }
-    try {
-      callback(error, JSON.parse(body));
-    } catch (e) {
-      callback(error, body);
+    if (callback) {
+      if (error) {
+        try {
+          callback(error, JSON.parse(body));
+        } catch (e) {
+          callback(error, body);
+        }
+        return;
+      }
+      if (response.statusCode !== 200) {
+        callback(new Error('GetTorrentDetails failed ' + response.statusCode + '  with hash: ' + hash));
+      }
     }
   });
 }
@@ -527,14 +537,16 @@ function execGlobalCommand(queue, command, options, callback) {
     formData: options,
   }, function(error, response, body) {
     if (callback) {
-      if (response.statusCode !== 200) {
-        callback(new Error('ExecGlobalCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      if (error) {
+        try {
+          callback(error, JSON.parse(body));
+        } catch (e) {
+          callback(error, body);
+        }
         return;
       }
-      try {
-        callback(error, JSON.parse(body));
-      } catch (e) {
-        callback(error, body);
+      if (response.statusCode !== 200) {
+        callback(new Error('ExecGlobalCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
       }
     }
   });
@@ -555,14 +567,16 @@ function execTorrentCommand(queue, command, torrents, options, callback) {
       url: '/command/' + command,
       formData: Object.assign({}, options, {hash: hash}),
     }, function(error, response, body) {
-      if (response.statusCode !== 200) {
-        done(new Error('ExecTorrentCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(Object.assign({}, options, {hash: hash}))));
+      if (error) {
+        try {
+          done(error, JSON.parse(body));
+        } catch (e) {
+          done(error, body);
+        }
         return;
       }
-      try {
-        done(error, JSON.parse(body));
-      } catch (e) {
-        done(error, body);
+      if (response.statusCode !== 200) {
+        done(new Error('ExecTorrentCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(Object.assign({}, options, {hash: hash}))));
       }
     });
   }, function(error, results) {
@@ -587,14 +601,16 @@ function execGroupCommand(queue, command, torrents, options, callback) {
     formData: Object.assign({}, options, {hashes: getHashList(torrents).join('|')}),
   }, function(error, response, body) {
     if (callback) {
-      if (response.statusCode !== 200) {
-        callback(new Error('ExecGroupCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
+      if (error) {
+        try {
+          callback(error, JSON.parse(body));
+        } catch (e) {
+          callback(error, body);
+        }
         return;
       }
-      try {
-        callback(error, JSON.parse(body));
-      } catch (e) {
-        callback(error, body);
+      if (response.statusCode !== 200) {
+        callback(new Error('ExecGroupCommand failed ' + response.statusCode + '  with options: ' + JSON.stringify(options)));
       }
     }
   });
@@ -616,4 +632,3 @@ function getHashList(items) {
   });
   return hashes;
 }
-
